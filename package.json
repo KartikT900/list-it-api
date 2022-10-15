@@ -1,0 +1,25 @@
+{
+  "name": "list-it-api",
+  "version": "1.0.0",
+  "description": "API for List-IT-UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KartikT900/list-it-api.git"
+  },
+  "keywords": [
+    "javascript",
+    "prisma",
+    "js",
+    "typescript"
+  ],
+  "author": "KartikT900",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KartikT900/list-it-api/issues"
+  },
+  "homepage": "https://github.com/KartikT900/list-it-api#readme"
+}
