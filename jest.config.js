@@ -29,6 +29,5 @@ module.exports = {
     './public'
   ],
   coverageReporters: ['html'],
-  setupFilesAfterEnv: ['<rootDir>/src/test/setupTest.js'],
-  testEnvironment: 'jsdom'
+  testEnvironment: 'node'
 };
