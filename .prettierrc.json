@@ -1,0 +1,19 @@
+{
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "parser": "babel-ts",
+  "tabWidth": 2,
+  "endOfLine": "auto",
+  "printWidth": 70,
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "options": {
+        "parser": "babel-ts"
+      }
+    }
+  ]
+}
