@@ -4,10 +4,14 @@
   "description": "API for List-IT-UI",
   "main": "index.js",
   "scripts": {
+    "lint-staged": "lint-staged",
+    "lint": "eslint --fix",
+    "format": "prettier --check --write  \"src/**/*.ts\"",
     "start": "node index",
     "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "dev:test": "jest --detectOpenHandles --coverage --watchAll",
-    "test": "jest --coverage --silent"
+    "test": "jest --coverage --silent",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
