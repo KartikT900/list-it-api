@@ -28,9 +28,6 @@ module.exports = {
   },
   root: true,
   rules: {
-    'no-console': [
-      process.env.NODE_ENV === 'debug' ? 0 : 2,
-      { allow: ['warn', 'error'] }
-    ]
+    'no-console': [2, { allow: ['warn', 'error'] }]
   }
 };
