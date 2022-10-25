@@ -1,0 +1,13 @@
+node_modules
+coverage
+.github
+.husky
+dist
+.eslintignore
+.eslintrc.cjs
+.gitignore
+.lintstagedrc.json
+.prettierrc.json
+jest.config.ts
+nodemon.json
+setupTest.ts

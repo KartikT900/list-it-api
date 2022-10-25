@@ -1,0 +1,27 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "list-it API",
+    "description": "API for list-it UI",
+    "version": "1.0.0"
+  },
+  "basePath": "/api/v1",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check status.",
+        "description": "To check and ensure API is running fine.",
+        "produces": "application/json",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

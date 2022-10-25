@@ -1,3 +1,4 @@
+import './server';
 import getAllUsers from './service/sample.service';
 
 async function main() {
