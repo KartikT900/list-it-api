@@ -30,7 +30,7 @@ app.use(
  * Listen on / and return sample response
  */
 app.get(`${BASE_URL}/health`, (req: Request, res: Response) => {
-  res.status(200).json({ status: 'API is healthy' });
+  res.status(200).json({ status: 'API is healthy!!' });
 });
 
 const PORT = process.env.PORT ?? 3000;
