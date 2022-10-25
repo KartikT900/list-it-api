@@ -18,12 +18,14 @@ module.exports = {
   collectCoverageFrom: ['**/*.*', '!**/**/*.json'],
   coveragePathIgnorePatterns: [
     '/node_modules/',
+    'dist',
     './prisma',
     './config',
     './coverage',
     '.config.(t|j)s',
     '.eslintrc.cjs',
     '<rootDir>/src/index.ts',
+    '<rootDir>/src/server.ts',
     './public'
   ],
   setupFilesAfterEnv: ['<rootDir>/setupTest.ts'],
