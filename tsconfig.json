@@ -18,6 +18,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["prisma","src/**/*.ts"],
-  "exclude": ["node_modules","setupTest.js"]
+  "include": ["prisma","src/**/*.ts", "*.ts"],
+  "exclude": ["dist","node_modules"]
 }
