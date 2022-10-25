@@ -70,11 +70,6 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: validate task-definition
-        id: validate
-        run: |
-          sed -n 12,15p ${{ steps.task-def.outputs.task-definition }}
-
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@bf55a78417f88521774e4968fd16b512d76cd4ae
         with:
