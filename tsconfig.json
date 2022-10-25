@@ -19,5 +19,5 @@
     "experimentalSpecifierResolution": "node"
   },
   "include": ["prisma","src/**/*.ts"],
-  "exclude": ["node_modules","setupTest.js", "src/**/*.test.ts"]
+  "exclude": ["node_modules","setupTest.js"]
 }
