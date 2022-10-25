@@ -17,4 +17,4 @@ RUN npx prisma generate
 
 EXPOSE 3001
 
-CMD ["node", "--es-module-specifier-resolution=node", "dist/index"]
+CMD ["npm", "start"]

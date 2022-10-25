@@ -1,4 +1,2 @@
 dist
 .eslintrc.cjs
-setupTest.ts
-jest.config.ts
