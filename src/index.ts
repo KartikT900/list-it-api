@@ -1,9 +1,11 @@
 import './server';
-import getAllUsers from './service/sample.service';
+import getAllUsersCount from './service/sample.service';
 
 async function main() {
   try {
-    await getAllUsers();
+    const users = await getAllUsersCount();
+    // eslint-disable-next-line no-console
+    console.info(`db users count:${users}`);
   } catch (e) {
     // error handling
   }

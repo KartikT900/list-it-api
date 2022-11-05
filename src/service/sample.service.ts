@@ -1,9 +1,9 @@
 import prisma from '../prismaClient';
 
-async function getAllUsers() {
-  const users = await prisma.users.findMany();
+async function getAllUsersCount() {
+  const userCount: number = await prisma.users.count();
 
-  return users;
+  return userCount;
 }
 
-export default getAllUsers;
+export default getAllUsersCount;
