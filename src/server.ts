@@ -1,14 +1,16 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, Router } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 
 import swaggerDoc from '../docs/swagger.json';
 
+import userController from './controller/user.controller';
+
 /**
  * Base URL
  */
-const BASE_URL = '/api/v1';
+export const BASE_URL = '/api/v1';
 /**
  * Initialize express server
  */
@@ -25,6 +27,7 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(swaggerDoc)
 );
+app.use(Router().use(BASE_URL, userController));
 
 /**
  * Listen on / and return sample response
