@@ -1,22 +1,14 @@
-import getAllUsers from './sample.service';
+import getAllUsersCount from './sample.service';
 
 import { prismaMock } from '../../setupTest';
 
 describe('sample.service', () => {
   it('runs successfully', async () => {
-    const users = [
-      {
-        user_id: '2321rf32fvvvr23232',
-        email: 'test123@test.com',
-        name: 'test123',
-        password: 'ffefefef',
-        nickname: ''
-      }
-    ];
+    const users = 1;
 
-    prismaMock.users.findMany.mockResolvedValue(users);
+    prismaMock.users.count.mockResolvedValue(users);
 
-    const result = await getAllUsers();
+    const result = await getAllUsersCount();
 
     expect(result).toEqual(users);
   });
