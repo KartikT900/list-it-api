@@ -1,23 +1,33 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Request, Response, Router } from 'express';
 
-import getAllUsersCount from '../service/sample.service';
+import { users } from 'models/user';
+import getUserById from '../service/user.service';
 
 const router = Router();
 
 /**
- * @route {GET} /getUsersCount
- * @returns number: total count of users
+ * Get user information by user_id
+ * @auth required
+ * @route {GET} /getUserById/:user_id
+ * @queryparam user_id User ID
+ * @returns user: matching the user_id
  */
 router.get(
-  '/getUsersCount',
+  '/getUserById/:user_id',
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  async (_req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
-      const users = await getAllUsersCount();
+      const userId = req.params.user_id;
+      const user: users | null = await getUserById(userId);
 
-      res.status(200).json({ totalUsers: users });
+      if (!user) {
+        res.status(404).json({ message: 'user does not exit' });
+        return;
+      } else {
+        return res.status(200).json(user);
+      }
     } catch (error) {
-      next(error);
+      console.error(error);
     }
   }
 );
