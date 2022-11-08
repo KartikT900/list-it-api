@@ -10,16 +10,111 @@
     "https",
     "http"
   ],
+  "securityDefinitions": {
+    "bearerToken": {
+      "description": "OAuth2 bearer token generated using set options",
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://dev-1pzb3iuk.us.auth0.com/authorize",
+      "tokenUrl": "https://dev-1pzb3iuk.us.auth0.com/oauth/token",
+      "scopes": {
+        "lst:user:read": "Grants read access",
+        "lst:user:write": "Grants write access"
+      },
+      "name": "Authorization",
+      "scheme": "bearer",
+      "in": "header"
+    }
+  },
+  "statusMessages": {
+    "401_message": "Unauthorized!!!",
+    "404_user_message": "User does not exist",
+    "400_message": "Bad Request"
+  },
   "paths": {
     "/health": {
       "get": {
         "summary": "Health check status.",
         "description": "To check and ensure API is running fine.",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "produces": "application/json",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
           }
+        }
+      }
+    },
+    "/getUserById": {
+      "get": {
+        "summary": "Get User details by user_id",
+        "description": "To get User details by user_id",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "User ID of the user to fetch details for.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": {
+              "$ref": "#/statusMessages/400_message"
+            }
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
+          },
+          "404": {
+            "description": {
+              "$ref": "#/statusMessages/404_user_message"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Users": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string",
+          "format": "password"
+        },
+        "nickname": {
+          "type": "string"
         }
       }
     }
