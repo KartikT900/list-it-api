@@ -8,16 +8,21 @@ const router = Router();
 /**
  * Get user information by user_id
  * @auth required
- * @route {GET} /getUserById/:user_id
+ * @route {GET} /getUserById
  * @queryparam user_id User ID
  * @returns user: matching the user_id
  */
 router.get(
-  '/getUserById/:user_id',
+  '/getUserById',
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   async (req: Request, res: Response) => {
     try {
-      const userId = req.params.user_id;
+      const userId: string = req.query.user_id as string;
+
+      if (!userId) {
+        return res.status(400).json({ message: 'Bad Request' });
+      }
+
       const user: users | null = await getUserById(userId);
 
       if (!user) {
