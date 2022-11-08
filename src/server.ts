@@ -1,33 +1,83 @@
-import express, { Request, Response, Router } from 'express';
+import express, {
+  NextFunction,
+  Request,
+  RequestHandler,
+  Response
+} from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import {
+  expressjwt,
+  GetVerificationKey,
+  UnauthorizedError
+} from 'express-jwt';
+import JwksClient from 'jwks-rsa';
 import swaggerUi from 'swagger-ui-express';
+import * as dotenv from 'dotenv';
+
+import routes from './routes';
 
 import swaggerDoc from '../docs/swagger.json';
 
-import userController from './controller/user.controller';
+/**load environment variables */
+dotenv.config();
 
 /**
  * Base URL
  */
 export const BASE_URL = '/api/v1';
+
 /**
  * Initialize express server
  */
 const app = express();
 
-/**
- * Server configuration
- */
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+/** Setuo Swagger-UI */
 app.use(
   `${BASE_URL}/docs`,
   swaggerUi.serve,
   swaggerUi.setup(swaggerDoc)
 );
-app.use(Router().use(BASE_URL, userController));
+
+/**
+ * Setup Authorization
+ */
+const jwtCheck = expressjwt({
+  secret: JwksClient.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: process.env.JWKURI ?? ''
+  }) as GetVerificationKey,
+  audience: process.env.AUDIENCE,
+  issuer: process.env.ISSUER,
+  algorithms: ['RS256']
+});
+
+app.use(jwtCheck as RequestHandler);
+
+/**
+ * Server configuration
+ */
+
+/** common error handler */
+app.use(function (
+  err: UnauthorizedError,
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(err.status).send({ message: 'Unauthorized!!!' });
+  } else {
+    next(err);
+  }
+});
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(routes(BASE_URL));
 
 /**
  * Listen on / and return sample response
