@@ -26,6 +26,7 @@ module.exports = {
     '.eslintrc.cjs',
     '<rootDir>/src/index.ts',
     '<rootDir>/src/server.ts',
+    '<rootDir>/src/routes.ts',
     '<rootDir>/src/controller',
     './public'
   ],
