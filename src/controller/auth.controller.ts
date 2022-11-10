@@ -1,7 +1,7 @@
 import { Response, Router } from 'express';
 import { Request as JWTRequest } from 'express-jwt';
 
-import { users } from 'models/user';
+import { User } from 'models/User';
 
 import getUserById from '../service/user.service';
 
@@ -22,7 +22,7 @@ router.post('/authorize', async (req: JWTRequest, res: Response) => {
   }
 
   try {
-    const userDetails: users | null = await getUserById(user_id);
+    const userDetails: User | null = await getUserById(user_id);
 
     if (userDetails) {
       res.status(200).json(userDetails);

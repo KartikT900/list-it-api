@@ -77,6 +77,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Service route configuration
 app.use(routes(BASE_URL));
 
 /**
