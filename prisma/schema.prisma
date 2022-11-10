@@ -7,12 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  name     String  @db.VarChar
-  email    String  @db.VarChar
-  password String  @db.VarChar
-  user_id  String  @id(map: "Primary_Key") @db.VarChar
-  nickname String? @db.VarChar
+model user {
+  id        Int          @default(autoincrement())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  name      String       @db.VarChar
+  email     String       @db.VarChar
+  password  String       @db.VarChar
+  user_id   String       @id(map: "User_Primary_Key") @db.VarChar(20)
+  nickname  String?      @db.VarChar
+  notes     noteonuser[]
 
-  @@unique([name, email], map: "Unique")
+  @@unique([name, email], map: "Unique_user")
+}
+
+model note {
+  id           Int          @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  title        String       @db.VarChar(255)
+  content      String
+  noteId       String       @id(map: "Note_Primary_Key") @unique(map: "Unique_note") @db.VarChar(40)
+  ownerId      String       @db.VarChar(255)
+  sharedOwners noteonuser[]
+}
+
+model noteonuser {
+  noteId String
+  userId String
+  note   note   @relation(fields: [noteId], references: [noteId])
+  user   user   @relation(fields: [userId], references: [user_id])
+
+  @@id([noteId, userId])
 }

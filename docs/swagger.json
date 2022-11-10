@@ -29,7 +29,11 @@
   "statusMessages": {
     "401_message": "Unauthorized!!!",
     "404_user_message": "User does not exist",
-    "400_message": "Bad Request"
+    "400_message": "Bad Request",
+    "500_note_message": "Failed to create Note",
+    "500_notes_list_message": "Failed to retrieve notes",
+    "500_note_update_message": "Failed to update note",
+    "500_message": "Internal server error"
   },
   "paths": {
     "/health": {
@@ -94,10 +98,151 @@
           }
         }
       }
+    },
+    "/saveNote": {
+      "post": {
+        "summary": "Create a new note",
+        "description": "Create a new note with title, content and owner",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data for creating a new note",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SaveNoteRequest",
+              "schema": {
+                "$ref": "#/definitions/Note"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note with NoteId:<> created successfully"
+          },
+          "400": {
+            "description": {
+              "$ref": "#/statusMessages/400_message"
+            }
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
+          },
+          "500": {
+            "description": {
+              "$ref": "#/statusMessages/500_note_message"
+            }
+          }
+        }
+      }
+    },
+    "/notes": {
+      "get": {
+        "summary": "Get a list of notes",
+        "description": "Get list of owned and shared notes",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "User ID of the user to fetch notes for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetNotesResponse"
+            }
+          },
+          "400": {
+            "description": {
+              "$ref": "#/statusMessages/400_message"
+            }
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
+          },
+          "500": {
+            "description": {
+              "$ref": "#/statusMessages/500_notes_list_message"
+            }
+          }
+        }
+      }
+    },
+    "/shareNote": {
+      "put": {
+        "summary": "Share a note with a user",
+        "description": "Update an existing note and share it with the respective userId",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "UserId to share the note to",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "noteId",
+            "in": "query",
+            "description": "NoteId to update the shared owner for the respective note",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref":"#/definitions/Note"
+            }
+          },
+          "400": {
+            "description": {
+              "$ref": "#/statusMessages/400_message"
+            }
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
+          },
+          "500": {
+            "description": {
+              "$ref": "#/statusMessages/500_note_update_message"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
-    "Users": {
+    "User": {
       "type": "object",
       "properties": {
         "name": {
@@ -113,8 +258,75 @@
           "type": "string",
           "format": "password"
         },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
         "nickname": {
           "type": "string"
+        }
+      }
+    },
+    "Note": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "title": {
+          "type": "string"
+        },
+        "noteId": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "SaveNoteRequest": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "GetNotesResponse": {
+      "type": "object",
+      "properties": {
+        "owned": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Note"
+          }
+        },
+        "shared": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Note"
+          }
         }
       }
     }

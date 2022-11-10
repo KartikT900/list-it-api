@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 
-import { users } from 'models/user';
+import { User } from 'models/User';
 import getUserById from '../service/user.service';
 
 const router = Router();
@@ -23,7 +23,7 @@ router.get(
         return res.status(400).json({ message: 'Bad Request' });
       }
 
-      const user: users | null = await getUserById(userId);
+      const user: User | null = await getUserById(userId);
 
       if (!user) {
         res.status(404).json({ message: 'user does not exit' });
