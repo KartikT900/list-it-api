@@ -1,6 +1,10 @@
 import { Request, Response, Router } from 'express';
 
+// Models
+import { GetNotesResponse } from 'models/GetNotesResponse.js';
 import { SaveNoteRequest } from 'models/SaveNoteRequest';
+
+// Service methods
 import {
   getOwnedNotesByUserId,
   getSharedNotesByUserId,
@@ -49,7 +53,7 @@ router.get('/notes', async (req: Request, res: Response) => {
     const sharedNotes = await getSharedNotesByUserId(userId);
 
     if (ownedNotes || sharedNotes) {
-      const result = {
+      const result: GetNotesResponse = {
         owned: ownedNotes,
         shared: sharedNotes
       };
@@ -58,7 +62,7 @@ router.get('/notes', async (req: Request, res: Response) => {
     } else {
       return res
         .status(500)
-        .json({ message: 'Failed to retrive notes' });
+        .json({ message: 'Failed to retrieve notes' });
     }
   } catch (error) {
     console.error(error);
