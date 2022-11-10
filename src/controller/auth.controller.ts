@@ -1,7 +1,7 @@
 import { Response, Router } from 'express';
 import { Request as JWTRequest } from 'express-jwt';
 
-import { User } from '../models/User';
+import { User } from 'models/User';
 
 import getUserById from '../service/user.service';
 
