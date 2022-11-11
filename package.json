@@ -15,6 +15,7 @@
     "build": "npx tsc --project tsconfig.build.json",
     "dev:test": "jest --detectOpenHandles --coverage --watchAll",
     "test": "jest --coverage --silent --watchAll",
+    "test:nowatch": "jest --coverage --silent",
     "test:ci": "jest --bail --coverage=true",
     "prepare:dev": "husky install",
     "prisma:generate": "npx prisma generate"
