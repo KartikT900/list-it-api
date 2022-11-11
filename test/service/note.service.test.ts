@@ -5,13 +5,13 @@ import {
   saveNote,
   updateNote,
   updateNoteSharedOwners
-} from './note.service';
+} from '../../src/service/note.service';
 
-import { Note } from 'models/Note';
-import { SaveNoteRequest } from 'models/SaveNoteRequest';
+import { Note } from '../../src/models/Note';
+import { SaveNoteRequest } from '../../src/models/SaveNoteRequest';
 
 import { prismaMock } from '../../setupTest';
-import { UpdateNoteRequest } from 'models/UpdateNoteRequest.js';
+import { UpdateNoteRequest } from '../../src/models/UpdateNoteRequest.js';
 
 /** These tests are borderline pointless, except when the service has some
  * business logic, other than plain queries */
