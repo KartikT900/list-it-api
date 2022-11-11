@@ -5,6 +5,7 @@ import { Note } from 'models/Note';
 import { SaveNoteRequest } from 'models/SaveNoteRequest';
 
 import prisma from '../prismaClient';
+import { UpdateNoteRequest } from 'models/UpdateNoteRequest';
 
 /**
  * Creates and saves a new Note into the database
@@ -15,11 +16,13 @@ import prisma from '../prismaClient';
 export async function saveNote(
   saveNoteRequest: SaveNoteRequest
 ): Promise<Note | null> {
+  /** Generate a [RFC4122]{@link https://www.ietf.org/rfc/rfc4122.txt} UUID */
   const noteId: string = uuidv4();
 
   const result = await prisma.note.create({
     data: {
       ...saveNoteRequest,
+      lastModifiedBy: saveNoteRequest.ownerId,
       noteId
     }
   });
@@ -39,6 +42,9 @@ export async function findNoteById(
   const result = await prisma.note.findUnique({
     where: {
       noteId
+    },
+    include: {
+      sharedOwners: true
     }
   });
 
@@ -57,6 +63,9 @@ export async function getOwnedNotesByUserId(
   const result = await prisma.note.findMany({
     where: {
       ownerId: userId
+    },
+    include: {
+      sharedOwners: true
     }
   });
 
@@ -110,6 +119,89 @@ export async function updateNoteSharedOwners(
           }
         }
       }
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Updates details of an existing note, while also creating a new version for current note details (before the update). Shared users for a NoteId are also allowed to update the note, provided they the said userId exists as shared for the note.
+ *
+ * @param updateNoteRequest request containing new note details to update
+ * @returns updated note
+ */
+export async function updateNote(
+  updateNoteRequest: UpdateNoteRequest
+): Promise<Note | null> {
+  /** Get existing note details */
+  const currentNoteInfo: Note | null = await findNoteById(
+    updateNoteRequest.noteId
+  );
+
+  /** If note does not exist, just exit. */
+  if (!currentNoteInfo) {
+    throw new Error(
+      `Failed to find note with NoteId:${updateNoteRequest.noteId}`
+    );
+  }
+
+  /** While this scenario is not possible from the front-end, it's
+   * better to handle this edge case and avoid potential security issues
+   * that may crop up with invalid/unauthorized edits to a note with a user,
+   * with whom the note is not even shared.
+   *
+   * This is checking to see if the modifiedBy (alias -> userId) property in
+   * updateNoteRequest, is either the note owner or one of the shared owners.
+   * If said user is neither, than throw an error.
+   */
+  if (
+    currentNoteInfo.ownerId !== updateNoteRequest.modifiedBy &&
+    !currentNoteInfo.sharedOwners?.find(
+      (x) => x.userId === updateNoteRequest.modifiedBy
+    )
+  ) {
+    throw new Error(
+      `Failed to update note with userId:${updateNoteRequest.modifiedBy}`
+    );
+  }
+
+  /** Update existing note with new details and create a new note version with
+   * existing note details
+   */
+  const result = await prisma.note.update({
+    where: {
+      noteId: updateNoteRequest.noteId
+    },
+    data: {
+      title: updateNoteRequest.title,
+      lastModifiedBy: updateNoteRequest.modifiedBy,
+      content: updateNoteRequest.content,
+      noteversions: {
+        create: [
+          {
+            title: currentNoteInfo.title,
+            content: currentNoteInfo.content,
+            modifiedBy: updateNoteRequest.modifiedBy,
+            createdAt: currentNoteInfo.updatedAt
+          }
+        ]
+      }
+    }
+  });
+
+  return result;
+}
+
+export async function getNoteVersions(
+  noteId: string
+): Promise<Note | null> {
+  const result = await prisma.note.findUnique({
+    where: {
+      noteId
+    },
+    include: {
+      noteversions: true
     }
   });
 

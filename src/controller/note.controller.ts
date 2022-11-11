@@ -2,13 +2,17 @@ import { Request, Response, Router } from 'express';
 
 // Models
 import { GetNotesResponse } from 'models/GetNotesResponse.js';
+import { GetNotesWithVersionsResponse } from 'models/GetNotesWithVersionsResponse.js';
 import { SaveNoteRequest } from 'models/SaveNoteRequest';
+import { UpdateNoteRequest } from 'models/UpdateNoteRequest';
 
 // Service methods
 import {
+  getNoteVersions,
   getOwnedNotesByUserId,
   getSharedNotesByUserId,
   saveNote,
+  updateNote,
   updateNoteSharedOwners
 } from '../service/note.service';
 
@@ -89,6 +93,72 @@ router.put('/shareNote', async (req: Request, res: Response) => {
         .status(500)
         .json({ message: 'Failed to update note' });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.put('/updateNote', async (req: Request, res: Response) => {
+  try {
+    const updateNoteRequest: UpdateNoteRequest =
+      req.body as UpdateNoteRequest;
+
+    const result = await updateNote(updateNoteRequest);
+
+    if (!result) {
+      return res
+        .status(500)
+        .json({ message: 'Failed to update note' });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get('/noteVersions', async (req: Request, res: Response) => {
+  try {
+    const noteId: string = req.query.noteId as string;
+
+    if (!noteId) {
+      return res.status(400).json({ message: 'Bad Request' });
+    }
+
+    const result = await getNoteVersions(noteId);
+
+    if (result) {
+      const notesWithVersions: GetNotesWithVersionsResponse = {
+        current: {
+          id: result.id,
+          noteId: result.noteId,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+          title: result.title,
+          content: result.content,
+          ownerId: result.ownerId,
+          lastModifiedBy: result.ownerId
+        },
+        previousVersions: [
+          ...(result.noteversions?.map((note) => {
+            return {
+              ...note,
+              createdAt: new Date(note.createdAt)
+            };
+          }) ?? [])
+        ]
+      };
+
+      return res.status(200).json(notesWithVersions);
+    }
+
+    return res
+      .status(500)
+      .json({ message: 'Failed to retrieve notes' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

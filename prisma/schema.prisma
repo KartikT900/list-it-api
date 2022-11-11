@@ -22,14 +22,16 @@ model user {
 }
 
 model note {
-  id           Int          @default(autoincrement())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  title        String       @db.VarChar(255)
-  content      String
-  noteId       String       @id(map: "Note_Primary_Key") @unique(map: "Unique_note") @db.VarChar(40)
-  ownerId      String       @db.VarChar(255)
-  sharedOwners noteonuser[]
+  id             Int           @default(autoincrement())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  title          String        @db.VarChar(255)
+  content        String        @db.Text
+  noteId         String        @id(map: "Note_Primary_Key") @unique(map: "Unique_note") @db.VarChar(40)
+  ownerId        String        @db.VarChar(20)
+  lastModifiedBy String        @db.VarChar(20)
+  sharedOwners   noteonuser[]
+  noteversions   noteversion[]
 }
 
 model noteonuser {
@@ -39,4 +41,16 @@ model noteonuser {
   user   user   @relation(fields: [userId], references: [user_id])
 
   @@id([noteId, userId])
+}
+
+model noteversion {
+  id         Int      @default(autoincrement())
+  note_id    String
+  note       note     @relation(fields: [note_id], references: [noteId])
+  title      String   @db.VarChar(255)
+  content    String   @db.Text
+  createdAt  DateTime @db.Timestamp()
+  modifiedBy String   @db.VarChar(255)
+
+  @@id([id, note_id])
 }

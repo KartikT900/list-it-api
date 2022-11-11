@@ -1,4 +1,4 @@
-import getUserById from './user.service';
+import getUserById from '../../src/service/user.service';
 
 import { prismaMock } from '../../setupTest';
 

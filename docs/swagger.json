@@ -219,7 +219,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref":"#/definitions/Note"
+              "$ref": "#/definitions/Note"
             }
           },
           "400": {
@@ -235,6 +235,96 @@
           "500": {
             "description": {
               "$ref": "#/statusMessages/500_note_update_message"
+            }
+          }
+        }
+      }
+    },
+    "/updateNote": {
+      "put": {
+        "summary": "Update note details",
+        "description": "Update details for an existing note",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Details for updating a note",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateNoteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          },
+          "400": {
+            "description": {
+              "$ref": "#/statusMessages/400_message"
+            }
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
+          },
+          "500": {
+            "description": {
+              "$ref": "#/statusMessages/500_note_update_message"
+            }
+          }
+        }
+      }
+    },
+    "/noteVersions": {
+      "get": {
+        "summary": "Get version history for a note",
+        "description": "Returns all previously modified snapshots for a note",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "query",
+            "description": "Id of the note to fetch version history for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetNotesWithVersionsResponse"
+            }
+          },
+          "400": {
+            "description": {
+              "$ref": "#/statusMessages/400_message"
+            }
+          },
+          "401": {
+            "description": {
+              "$ref": "#/statusMessages/401_message"
+            }
+          },
+          "500": {
+            "description": {
+              "$ref": "#/statusMessages/500_notes_list_message"
             }
           }
         }
@@ -296,6 +386,33 @@
         },
         "content": {
           "type": "string"
+        },
+        "lastModifiedBy": {
+          "type": "string"
+        }
+      }
+    },
+    "NoteVersion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "title": {
+          "type": "string"
+        },
+        "note_id": {
+          "type": "string"
+        },
+        "modifiedBy": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
         }
       }
     },
@@ -303,6 +420,23 @@
       "type": "object",
       "properties": {
         "ownerId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateNoteRequest": {
+      "type": "object",
+      "properties": {
+        "noteId": {
+          "type": "string"
+        },
+        "modifiedBy": {
           "type": "string"
         },
         "title": {
@@ -326,6 +460,21 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/Note"
+          }
+        }
+      }
+    },
+    "GetNotesWithVersionsResponse": {
+      "type": "object",
+      "properties": {
+        "current": {
+          "type": "object",
+          "$ref": "#/definitions/Note"
+        },
+        "previousVersions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NoteVersion"
           }
         }
       }
