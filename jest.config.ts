@@ -31,6 +31,6 @@ module.exports = {
     './public'
   ],
   setupFilesAfterEnv: ['<rootDir>/setupTest.ts'],
-  coverageReporters: ['html'],
+  coverageReporters: ['html', 'lcov'],
   testEnvironment: 'node'
 };
