@@ -1,3 +1,4 @@
+import { NoteVersion } from './NoteVersion';
 import { SharedOwners } from './SharedOwners';
 
 export interface Note {
@@ -10,4 +11,5 @@ export interface Note {
   ownerId: string;
   lastModifiedBy: string;
   sharedOwners?: SharedOwners[];
+  noteversions?: NoteVersion[];
 }

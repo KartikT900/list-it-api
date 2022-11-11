@@ -5,7 +5,7 @@ import { Note } from 'models/Note';
 import { SaveNoteRequest } from 'models/SaveNoteRequest';
 
 import prisma from '../prismaClient';
-import { UpdateNoteRequest } from 'models/UpdateNoteRequest.js';
+import { UpdateNoteRequest } from 'models/UpdateNoteRequest';
 
 /**
  * Creates and saves a new Note into the database
@@ -187,6 +187,21 @@ export async function updateNote(
           }
         ]
       }
+    }
+  });
+
+  return result;
+}
+
+export async function getNoteVersions(
+  noteId: string
+): Promise<Note | null> {
+  const result = await prisma.note.findUnique({
+    where: {
+      noteId
+    },
+    include: {
+      noteversions: true
     }
   });
 

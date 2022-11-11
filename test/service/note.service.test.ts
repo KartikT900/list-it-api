@@ -1,5 +1,6 @@
 import {
   findNoteById,
+  getNoteVersions,
   getOwnedNotesByUserId,
   getSharedNotesByUserId,
   saveNote,
@@ -11,7 +12,7 @@ import { Note } from '../../src/models/Note';
 import { SaveNoteRequest } from '../../src/models/SaveNoteRequest';
 
 import { prismaMock } from '../../setupTest';
-import { UpdateNoteRequest } from '../../src/models/UpdateNoteRequest.js';
+import { UpdateNoteRequest } from '../../src/models/UpdateNoteRequest';
 
 /** These tests are borderline pointless, except when the service has some
  * business logic, other than plain queries */
@@ -172,5 +173,27 @@ describe('note.service', () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(prismaMock.note.update).not.toBeCalled();
     });
+  });
+
+  it('runs getNoteVersions successfully', async () => {
+    const noteWithVersions: Note = {
+      ...note,
+      noteversions: [
+        {
+          id: 1,
+          note_id: '100473f6-bd29-4f3b-acb5-3268e98d360f',
+          title: 'test note1',
+          content: 'xnxsjxnjsxjsnsxnjsnxnjnsjxjnnjsxu7878979787',
+          createdAt: new Date(Date.now()),
+          modifiedBy: '40468f14087e2de0fe24'
+        }
+      ]
+    };
+
+    prismaMock.note.findUnique.mockResolvedValue(noteWithVersions);
+
+    const result = await getNoteVersions(noteWithVersions.noteId);
+
+    expect(result).toEqual(noteWithVersions);
   });
 });
