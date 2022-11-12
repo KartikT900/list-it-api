@@ -8,6 +8,7 @@ import { UpdateNoteRequest } from 'models/UpdateNoteRequest';
 
 // Service methods
 import {
+  deleteNoteById,
   getNoteVersions,
   getOwnedNotesByUserId,
   getSharedNotesByUserId,
@@ -159,6 +160,32 @@ router.get('/noteVersions', async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: 'Failed to retrieve notes' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.delete('/deleteNote', async (req: Request, res: Response) => {
+  try {
+    const noteId: string = req.query.noteId as string;
+
+    if (!noteId) {
+      return res.status(400).json({ message: 'Bad Request' });
+    }
+
+    const result = await deleteNoteById(noteId);
+
+    if (result) {
+      return res.status(200).json({
+        message: `Note with NoteId:${result.noteId} deleted successfully`
+      });
+    }
+
+    return res
+      .status(500)
+      .json({ message: 'Failed to retrieve note' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

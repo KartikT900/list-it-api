@@ -207,3 +207,57 @@ export async function getNoteVersions(
 
   return result;
 }
+
+export async function deleteNoteById(noteId: string) {
+  /**
+   * Check if any relational data exists for a note
+   */
+  const relationalNoteData = await prisma.note.findUnique({
+    where: {
+      noteId
+    },
+    include: {
+      noteversions: {
+        take: 1
+      },
+      sharedOwners: {
+        take: 1
+      }
+    }
+  });
+
+  /** No note with given noteId found */
+  if (!relationalNoteData) {
+    return relationalNoteData;
+  }
+
+  /** Before we can delete a note from DB, we first need to delete
+   * relational data from noteversion and noteonuser tables.
+   */
+  if (
+    relationalNoteData.sharedOwners.length !== 0 ||
+    relationalNoteData.noteversions.length !== 0
+  ) {
+    await prisma.note.update({
+      where: {
+        noteId
+      },
+      data: {
+        noteversions: {
+          deleteMany: {}
+        },
+        sharedOwners: {
+          deleteMany: {}
+        }
+      }
+    });
+  }
+
+  const result = await prisma.note.delete({
+    where: {
+      noteId
+    }
+  });
+
+  return result;
+}

@@ -1,4 +1,5 @@
 import {
+  deleteNoteById,
   findNoteById,
   getNoteVersions,
   getOwnedNotesByUserId,
@@ -149,8 +150,7 @@ describe('note.service', () => {
       ).rejects.toThrowError(
         `Failed to find note with NoteId:${updateNoteRequest.noteId}`
       );
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(prismaMock.note.update).not.toBeCalled();
+      expect(prismaMock.note.update.mock.calls.length).toEqual(0);
     });
 
     it('throws error when the modifiedBy value is neither an owner nor a shared owner for the note to update', async () => {
@@ -170,8 +170,7 @@ describe('note.service', () => {
       ).rejects.toThrowError(
         'Failed to update note with userId:unknownowner'
       );
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(prismaMock.note.update).not.toBeCalled();
+      expect(prismaMock.note.update.mock.calls.length).toEqual(0);
     });
   });
 
@@ -195,5 +194,53 @@ describe('note.service', () => {
     const result = await getNoteVersions(noteWithVersions.noteId);
 
     expect(result).toEqual(noteWithVersions);
+  });
+
+  describe('deleteNoteById', () => {
+    const noteWithNoRelationalData: Note = {
+      ...note,
+      sharedOwners: [],
+      noteversions: []
+    };
+
+    it('deletes note with no relational data successfully', async () => {
+      prismaMock.note.findUnique.mockResolvedValue(
+        noteWithNoRelationalData
+      );
+      prismaMock.note.delete.mockResolvedValue(
+        noteWithNoRelationalData
+      );
+
+      const result = await deleteNoteById(
+        noteWithNoRelationalData.noteId
+      );
+
+      expect(result).toEqual(noteWithNoRelationalData);
+      expect(prismaMock.note.update.mock.calls.length).toEqual(0);
+      expect(prismaMock.note.delete.mock.calls.length).toEqual(1);
+    });
+
+    it('deletes note with relational data successfully', async () => {
+      prismaMock.note.findUnique.mockResolvedValue(note);
+      prismaMock.note.delete.mockResolvedValue(note);
+
+      const result = await deleteNoteById(
+        noteWithNoRelationalData.noteId
+      );
+
+      expect(result).toEqual(note);
+      expect(prismaMock.note.update.mock.calls.length).toEqual(1);
+      expect(prismaMock.note.delete.mock.calls.length).toEqual(1);
+    });
+
+    it('returns NULL when note is not found', async () => {
+      prismaMock.note.findUnique.mockResolvedValue(null);
+
+      const result = await deleteNoteById(note.noteId);
+
+      expect(result).toBeNull();
+      expect(prismaMock.note.update.mock.calls.length).toEqual(0);
+      expect(prismaMock.note.delete.mock.calls.length).toEqual(0);
+    });
   });
 });
